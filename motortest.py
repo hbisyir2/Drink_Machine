@@ -19,8 +19,8 @@ pins = [16]
 mode = {}
 for pin in pins:
 	GPIO.setup(pin, GPIO.OUT)
-	GPIO.setup(pin, GPIO.LOW)
-	mode[pin] = 'low'
+	GPIO.setup(pin, GPIO.HIGH)
+	mode[pin] = 'high'
 
 print('Enter number to make output high')
 print('Enter negative number to make output low')
