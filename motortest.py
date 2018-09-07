@@ -13,14 +13,14 @@ GPIO.setmode(GPIO.BOARD)
 #mode = {16: 'low', 18: 'low', 22: 'low', 19: 'low', 21: 'low', 23: 'low'}
 #pins = [16,18,22,19,21,23]
 
-pins = [16]
+pins = [11,13,15,16,18,22]
 
 
 mode = {}
 for pin in pins:
 	GPIO.setup(pin, GPIO.OUT)
-	GPIO.setup(pin, GPIO.LOW)
-	mode[pin] = 'low'
+	GPIO.output(pin, GPIO.HIGH)
+	mode[pin] = 'high'
 
 print('Enter number to make output high')
 print('Enter negative number to make output low')
