@@ -6,18 +6,20 @@ ScreenManagement:
     ConfigMotor:
     HomePage:
 
-<ConfigScreen>:
-    name: "config"
-    FloatLayout:
-        ConfigPage:
-            size_hint: 1, 0.8
-            pos_hint: {"left":1, "top":1}
-        Button:
-            on_release: app.root.current = "home"
-            text: "Start Drinking ;)"
-            font_size: 40
-            size_hint: 1, 0.2
-            pos_hint: {"left":1, "bottom":1}
+
+
+#<ConfigScreen>:
+#    name: "config"
+#    FloatLayout:
+#        ConfigPage:
+#            size_hint: 1, 0.8
+#            pos_hint: {"left":1, "top":1}
+#        Button:
+#            on_release: app.root.current = "home"
+#            text: "Start Drinking ;)"
+#            font_size: 40
+#            size_hint: 1, 0.2
+#            pos_hint: {"left":1, "bottom":1}
 
 <ConfigMotor>:
     name: "configmotor"
@@ -32,10 +34,9 @@ ScreenManagement:
             on_release: app.root.current = "config"
             font_size: 40
 
-<HomePage>:
-    name: "home"
-    Button:
-        on_release: app.root.current = "config"
-        text: "THIS IS HOME"
-        font_size: 40
-
+# <HomePage>:
+    # name: "home"
+    # Button:
+        # on_release: app.root.current = "config"
+        # text: "THIS IS HOME"
+        # font_size: 40

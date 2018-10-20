@@ -7,7 +7,11 @@ MOTOR_4 = 'None'
 MOTOR_5 = 'None'
 MOTOR_6 = 'None'
 
-DRINKS_MENU = ['Coke', 'Sprite', 'Orange Juice', 'Tequila', 'Rum', 'The CEUUUUURS']
+ALK_MENU = ['Rum', 'Tequila', 'Gin', 'Vodka', 'Whiskey', 'Scotch']
+MIXER_MENU = ['Coke', 'Diet Coke', 'Pepsi', 'Sprite', 'Orange Juice', 'Cranberry Juice', 'Ginger Ale', 'Margarita Mix']
+
+
+DRINKS_MENU = ALK_MENU+MIXER_MENU
 
 DrinkLabel_1 = Label(text='None')
 DrinkLabel_2 = Label(text='None')
