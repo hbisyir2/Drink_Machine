@@ -4,12 +4,16 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.slider import Slider
 from kivy.app import App
+from DrinkConstants import *
 
 class Menu:
     def __init__(self):
         self.drinks = [RumCoke(), TequilaSunrise(), WhiskeyGinger(), Margarita()]
         self.drink_menu = DrinkMakeMenu()
+        self.rail_menu = RailMenu()
         self.pour_cb = None
+        self.active_rail = None
+        self.rail_drink_list = RailDrinkList()
     def generate_drink_list(self, raw_drinks):
         mixers = []
         self.available = []
@@ -35,10 +39,27 @@ class Menu:
         return self.available
     def get_drink_menu(self):
         return self.drink_menu
+    def get_rail_drink_menu(self):
+        return self.rail_drink_list
     def bind_pour_buttons(self, cb):
         self.pour_cb = cb
     def get_pour_params(self, drink_name):
         return self.drink_menu.get_pour_params(drink_name)
+    def bind_rail_buttons(self, change_drink_cb, pour_cb):
+        self.rail_menu.bind_buttons(change_drink_cb, pour_cb)
+    def set_active_rail(self, new_rail):
+        self.active_rail = new_rail
+    def get_active_rail(self):
+        return self.active_rail
+    def change_rail_drink(self, new_drink):
+        self.rail_menu.change_drink(self.active_rail, new_drink)
+        self.active_rail = None
+    def get_rail_menu(self):
+        return self.rail_menu
+    def reload_rail_list(self, drink_list, change_rail_cb):
+        self.rail_drink_list.reload_list(self.active_rail, drink_list, change_rail_cb)
+    def get_rail_pour_params(self):
+        return self.rail_menu.get_pour_params()
 
 class RumCoke:
     def __init__(self):
@@ -78,7 +99,10 @@ class Margarita:
 
 class DrinkMakeMenu(GridLayout):
     def __init__(self, **kwargs):
-        super(DrinkMakeMenu, self).__init__(cols=2, size_hint=(1,0.8),pos_hint={"left":1, "top":1})
+        super(DrinkMakeMenu, self).__init__(cols=2,
+            #size_hint=(1,0.8),
+            #pos_hint={"left":1, "top":1},
+        )
         self.drink_entries = {}
     def reload_menu(self, drinks):
         self.clear_widgets()
@@ -148,3 +172,109 @@ class DrinkPourButton(Button):
             self.drink_list.append(ingredient)
     def bind_cb(self, cb):
         self.bind(on_press=cb)
+
+class RailMenu(GridLayout):
+    def __init__(self, **kwargs):
+        super(RailMenu, self).__init__(cols=1,rows=4)
+        self.alk = 'Choose A Drink!'
+        self.mixer = 'Choose A Drink!'
+        self.alk_quan = 0
+        self.mix_quan = 0
+
+        self.alk_label = Label(text=self.alk)
+        self.mixer_label = Label(text=self.mixer)
+        self.alk_change_btn = Button(
+            text='Change Alcohol',
+            font_size=30,
+        )
+        self.mix_change_btn = Button(
+            text='Change Mixer',
+            font_size=30,
+        )
+        self.pour_rail_btn = Button(text='POUR', font_size=44)
+
+        layout = GridLayout(cols=2,rows=2)
+        layout.add_widget(self.alk_label)
+        layout.add_widget(self.mixer_label)
+        layout.add_widget(self.alk_change_btn)
+        layout.add_widget(self.mix_change_btn)
+        
+        quan_layout = GridLayout(rows=2,cols=2)
+        self.alk_quan_label = Label(text=str(self.alk_quan))
+        self.mix_quan_label = Label(text=str(self.mix_quan))
+        alk_button_layout = GridLayout(rows=1,cols=2)
+        mix_button_layout = GridLayout(rows=1,cols=2)
+        self.alk_quan_up = Button(text='^^^', on_press=self.inc_alk_quan)
+        self.mix_quan_up = Button(text='^^^', on_press=self.inc_mix_quan)
+        self.alk_quan_down = Button(text='vvv', on_press=self.dec_alk_quan)
+        self.mix_quan_down = Button(text='vvv', on_press=self.dec_mix_quan)
+        alk_button_layout.add_widget(self.alk_quan_up)
+        alk_button_layout.add_widget(self.alk_quan_down)
+        mix_button_layout.add_widget(self.mix_quan_up)
+        mix_button_layout.add_widget(self.mix_quan_down)
+        quan_layout.add_widget(self.alk_quan_label)
+        quan_layout.add_widget(self.mix_quan_label)
+        quan_layout.add_widget(alk_button_layout)
+        quan_layout.add_widget(mix_button_layout)
+
+        self.add_widget(Label(text='Make Your Own Rail!', font_size=44))
+        self.add_widget(layout)
+        self.add_widget(quan_layout)
+        self.add_widget(self.pour_rail_btn)
+        
+    def bind_buttons(self, change_drink_cb, pour_cb):
+        self.alk_change_btn.bind(on_press=change_drink_cb)
+        self.mix_change_btn.bind(on_press=change_drink_cb)
+        self.pour_rail_btn.bind(on_press=pour_cb)
+    def change_drink(self, active, new_drink):
+        if 'Alcohol' in active: 
+            self.alk_label.text=new_drink
+            self.alk = new_drink
+        else: 
+            self.mixer_label.text=new_drink
+            self.mixer = new_drink
+    def inc_alk_quan(self, instance):
+        self.alk_quan += 1
+        self.alk_quan_label.text=str(self.alk_quan)
+    def dec_alk_quan(self, instance):
+        if self.alk_quan != 0: self.alk_quan -= 1
+        self.alk_quan_label.text=str(self.alk_quan)
+    def inc_mix_quan(self, instance):
+        self.mix_quan += 1
+        self.mix_quan_label.text=str(self.mix_quan)
+    def dec_mix_quan(self, instance):
+        if self.mix_quan != 0: self.mix_quan -= 1
+        self.mix_quan_label.text=str(self.mix_quan)
+    def get_pour_params(self):
+        return_val = {}
+        if self.alk != 'Choose A Drink!' and self.alk_quan != 0:
+            return_val[self.alk] = self.alk_quan
+        if self.mixer != 'Choose A Drink!' and self.mix_quan != 0:
+            return_val[self.mixer] = self.mix_quan
+        return return_val
+
+
+
+class RailDrinkList(GridLayout):
+    def __init__(self, **kwargs):
+        super(RailDrinkList, self).__init__(cols=2, size_hint=(1, 0.8), pos_hint={"left":1, "top":1})
+    def reload_list(self, active, drink_list, press_cb):
+        self.clear_widgets()
+        if 'Alcohol' in active: is_alk = True
+        else: is_alk = False
+        for drink in drink_list:
+            if is_alk and drink in ALK_MENU: 
+                self.add_widget(Button(text=drink, on_press=press_cb, background_color = [1,0,0,.75]))
+            elif not is_alk and drink in MIXER_MENU: self.add_widget(Button(text=drink, on_press=press_cb, background_color = [0,1,0,.75]))
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        

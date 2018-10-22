@@ -4,7 +4,9 @@ ScreenManagement:
     transition: FadeTransition()
     ConfigScreen:
     ConfigMotor:
+    ConfigRail:
     HomePage:
+    TimingPage:
 
 
 
@@ -30,9 +32,11 @@ ScreenManagement:
         Button:
             size_hint: 1, 0.2
             pos_hint: {"left":1, "bottom":1}
-            text: "Return"
+            text: "Go Back"
             on_release: app.root.current = "config"
             font_size: 40
+            background_color: [.247,.498,.749,1]
+
 
 # <HomePage>:
     # name: "home"
